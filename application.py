@@ -4,6 +4,11 @@ app = Flask(__name__)
 from google.appengine.ext import db
 from google.appengine.api import users
 
+try:
+    import json
+except ImportError:
+    import simplesjon as json
+
 from flask import redirect, url_for, request, render_template, abort, flash, get_flashed_messages
 
 class Task(db.Model):
@@ -29,13 +34,16 @@ def task_post():
     return redirect(url_for('list'))
 
 @app.route('/delete/<int:id>')
-def task_delete(id):
+@app.route('/delete/<int:id>.<f>')
+def task_delete(id, f='html'):
     task = Task.get_by_id(id)
     if task and task.user == users.get_current_user():
         task.delete()
     else:
         abort(404)
 
+    if f == 'json':
+        return json.dumps({ 'message' : 'Sucessful deleted!'})
     return redirect(url_for('list'))
 
 @app.route('/done/<int:id>')
@@ -44,7 +52,7 @@ def task_done(id):
     if task and task.user == users.get_current_user():
         if task.done:
             task.done = False
-        else: 
+        else:
             task.done = True
         task.put()
     else:
