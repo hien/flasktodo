@@ -3,19 +3,20 @@
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
         <title>Tasks</title>
+        <script src="{{ url_for('static', filename='js/jquery-1.4.2.min.js') }}" type="text/javascript" charset="utf-8"></script>
+        <script src="{{ url_for('static', filename='js/tasks.js') }}" type="text/javascript" charset="utf-8"></script>
     </head>
     <body id="">
         Welcome, {{ user.nickname() }} <a href="{{ logout_url }}">sign out</a>
 
         <ul>
             {% for task in tasks %}
-            <li><a href="/done/{{ task.key().id() }}">X</a> {% if task.done %}<strike>{% endif %}{{ task.name }}{% if task.done %}</strike>{% endif %} <a href="/delete/{{ task.key().id() }}">delete</a></li>
+            <li id="task-{{ task.key().id() }}"><a href="/done/{{ task.key().id() }}">X</a> {% if task.done %}<strike>{% endif %}{{ task.name }}{% if task.done %}</strike>{% endif %} <a href="/delete/{{ task.key().id() }}" onclick="delete_task({{ task.key().id() }}); return false;">delete</a><span class="" id="loading-{{ task.key().id() }}"></span></li>
             {% endfor %}
         </ul>
 
-        {% for flash in flashes %}
-        <p>{{ flash }}</p>
-        {% endfor %}
+        <div id="message-panel" class="">
+        </div>
 
         <form action="" method="post">
             <p><input type=text name=name>
