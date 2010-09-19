@@ -6,7 +6,7 @@ from google.appengine.api import users
 
 from flask import redirect, url_for, request, render_template, abort, flash, get_flashed_messages
 
-class Task(db.Model): 
+class Task(db.Model):
     user = db.UserProperty()
     name = db.StringProperty(required=True)
     done = db.BooleanProperty()
