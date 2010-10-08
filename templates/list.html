@@ -9,7 +9,7 @@
     <body id="">
         Welcome, {{ user.nickname() }} <a href="{{ logout_url }}">sign out</a>
 
-        <ul>
+        <ul id="task-list">
             {% for task in tasks %}
             <li id="task-{{ task.key().id() }}"><a href="/done/{{ task.key().id() }}">X</a> {% if task.done %}<strike>{% endif %}{{ task.name }}{% if task.done %}</strike>{% endif %} <a href="/delete/{{ task.key().id() }}" onclick="delete_task({{ task.key().id() }}); return false;">delete</a><span class="" id="loading-{{ task.key().id() }}"></span></li>
             {% endfor %}
@@ -18,9 +18,10 @@
         <div id="message-panel" class="">
         </div>
 
-        <form action="" method="post">
-            <p><input type=text name=name>
-            <input type=submit value=Add>
+        <form action="" method="post" onsubmit="return false;">
+            <input type="hidden" name="format" value="json" id=""/>
+            <p><input type="text" name="name" id="task-name">
+            <input type="submit" value="Add" onclick="add_task();" id="button-add" /><span id="loading-add"></span>
         </form>
     </body>
 </html>
