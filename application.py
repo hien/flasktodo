@@ -16,6 +16,13 @@ class Task(db.Model):
     name = db.StringProperty(required=True)
     done = db.BooleanProperty()
 
+    def __dict__(self):
+        return {
+            'id' : self.key().id(),
+            'name' : self.name,
+            'done' : self.done
+        }
+
 @app.route('/')
 def list():
     user = users.get_current_user()
@@ -24,14 +31,23 @@ def list():
 
 @app.route('/', methods=['POST'])
 def task_post():
+    f = request.form['format']
     name = request.form['name']
     if not name:
-        flash("Oops you forgot to set a task name.")
-        return redirect(url_for('list'))
+        msg = "Oops you forgot to set a task name"
+        if f == 'json':
+            return json.dumps({ 'message' : msg })
+        else:
+            flash(msg)
+            return redirect(url_for('list'))
+
     task = Task(name = request.form['name'])
     task.user = users.get_current_user()
     task.put()
-    return redirect(url_for('list'))
+    if f == 'json':
+        return json.dumps({ 'message' : 'Sucessful added!', 'task' : task.__dict__() })
+    else:
+        return redirect(url_for('list'))
 
 @app.route('/delete/<int:id>')
 @app.route('/delete/<int:id>.<f>')
